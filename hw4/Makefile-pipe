@@ -1,0 +1,14 @@
+# First target is default target, if you just type:  make
+
+FILE=pipe-example.c
+
+default: run
+
+run: pipe-example
+	./pipe-example
+
+pipe-example: ${FILE}
+	gcc -g -O0 -o pipe-example ${FILE}
+
+clean:
+	rm -f pipe-example a.out *~

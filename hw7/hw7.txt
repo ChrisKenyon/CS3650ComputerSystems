@@ -1,0 +1,71 @@
+Chris Kenyon
+CS3650 Fall 2016
+HW 7
+
+Processes:
+
+1.  a) proc.c
+    b) 10-13
+    c) ptable
+
+2.  The values are saved in the proc's context field.
+    a) proc.h
+    b) line 44-50
+    c) The context struct
+
+3.  Unused - When the process is not in use
+    Embryo - A new process being allocated, this state is required to run in kernel
+    Sleeping - Not currently executing, maybe in a wait
+    Runnable - Initialized, or finished sleeping, and ready to run
+    Running - Active and executing stuff
+    ZOMBIE - Finished process, ready for page to be freed. Kill me, but read my exit status first.
+
+4.  It is the assembly function swtch, defined by void swtch(struct context **old, struct context *new); in swtch.S
+
+5.  swtch saves the current register context in the 'old' stack pointer space, and then loads the register context from 'new' stack pointer space
+
+6.  This swtch function is called from scheduler() and sched().
+
+    scheduler loops through the process table looking for processes to run in the RUNNABLE state, sets them to RUNNING, and switches to their context.
+
+    sched is the function called by a process to transfer control back to the scheduler so that the loop can continue.
+
+
+PROCESS STARTUP:
+
+1.  The program is loaded into memory from lines 39 to 54 of exec.c, then from there to line 62, two pages are allocated, where the second page is the space for the user stack. From here to line 81, the user stack is prepared and the PC is set, so the first line can be executed as main.
+
+2.  The variable argv is passed into the exec call, defined on line 11 of exec.c as exec(char *path, char **argv). argc is initialized on line 15 and incremented to the proper value on the for loop on line 65
+
+3.  In exec.c, lines 90-94 it modifies the process
+
+
+SYSTEM CALLS:
+
+1.  In grep.c, when the main function calls open(), it is directed to the assembly code with the label "open" in usys.S. In this, the SYS_open syscall number (defined as 15 in syscall.h) is loaded into eax. Then, the syscall interrupt is triggered, which will call trap(), which then calls syscall() from syscall.c. This function loads the value of 15 from the syscalls[] array passed in and respectively calls sys_open() because of it.
+
+
+FILES AND FILE DESCRIPTORS:
+
+1.  a) sysfile.c
+    b) line 36-50
+    c) fdalloc() - This looks for the first index that is unused in the process' array of ofile[], which represents the process' open files. It then sets the fd at that index.
+
+2.  It is called 'ofile[]' (accessed at proc->ofile). The entry types are a file struct.
+
+3.  The field is called 'off' (accessed at f->off).
+
+4.  In syscall.c, line 327. f->off = 0;
+
+5.  It could've been initialized as FD_NONE or FD_PIPE
+
+6.  a) pipe.c
+    b) line 12
+    c) struct pipe
+    lock allows only one process to access the process at a time
+    data[] holds a string as an array of characters from the pipe
+    nread is the number of bytes read
+    nwrite is the number of bytes written
+    readopen and writeopen are boolean ints representing whether read or write fd is still open, respectively
+
+7.  The fd if statement sets a pointer to the file struct at f if it exists else returns -1 if it doesn't exist, causing sys_dup to exit with -1. Then the next if statement allocates a file descriptor at for that file handle, else returns an error value of -1 which sys_dup would also return. If both returned without -1 values, then the filedup() function is called and the file handles ref counter is incremented, and then the file descriptor is returned from sys_dup.

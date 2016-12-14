@@ -1,0 +1,7 @@
+#!/bin/sh
+sleep 5
+echo The directory is: $PWD
+echo The hostname is:  $HOST
+echo Your last shell was:  $SHELL
+echo "The files are:"
+ls

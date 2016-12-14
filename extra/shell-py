@@ -1,0 +1,14 @@
+
+CS 3650 Catch-Up Extra Credit
+Due: December 7, 2016
+Bonus: Replace lowest HW score with a 75/100.
+
+Submit with submit-*hwEX script. Come by office hours to claim credit.
+
+Rewrite the shell homework (hw4) in Python.
+
+Hints: 
+ - Unix system calls are available in the Python "os" module.
+ - You'll need to use the "dup" system call when changing the
+   stdin / stdout file descriptors.
+
